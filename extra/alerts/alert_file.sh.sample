@@ -49,7 +49,7 @@ debug_exec_order_default="false"
 
 : ${debug_exec_order=${debug_exec_order_default}}
 
-if [ "${debug_exec_order}" = "true" ]
+if [ "${debug_exec_order}" = "true" ]; then
     tstamp=`printf "%04d. " "$CRM_alert_node_sequence"`
     if [ ! -z $CRM_alert_timestamp ]; then
         tstamp="${tstamp} $CRM_alert_timestamp (`date "+%H:%M:%S.%06N"`): "

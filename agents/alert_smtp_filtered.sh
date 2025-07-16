@@ -48,7 +48,6 @@
 : ${CRM_alert_attribute_name:=""}
 : ${CRM_alert_attribute_value:=""}
 
-
 #############################################################
 # Pass "RHA_alert_kinds" as an option at the pcs alert create
 # stage, otherwise if the variable is null/not set by alert 

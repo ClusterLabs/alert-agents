@@ -7,7 +7,7 @@
   tasks:
   - name: Copy the alert_smtp script to the nodes
     copy:
-      src: alert_smtp.sh
+      src: ../agents/alert_smtp_filtered.sh
       mode: 0750
       owner: hacluster
       group: haclient

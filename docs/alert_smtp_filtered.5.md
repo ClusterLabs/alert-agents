@@ -19,7 +19,8 @@ By default, the email client the script expects is sendmail.
 
 **path=**_/var/lib/pacemaker/alert_smtp_filtered.sh_
 
-This is the path to the alert agent on the nodes' filesystems.
+This is the path to the alert agent on the nodes' filesystems - the path should match to wherever you've installed the file. By default they're placed in /usr/share/pacemaker/alerts/ when installing from rpm, 
+and they're usually manually placed in /var/lib/pacemaker/ for runtime when the agents are configured.
 
 **email_sender=**_user@example.com_
 
@@ -45,7 +46,7 @@ _resource_
 
     These alerts are generated when a resource is started, stopped, or fails to start. 
     
-_resource_
+_attriubute_
 
     These alerts are generated when a resource's attribute is changed. 
     
@@ -56,13 +57,11 @@ but not node, resource, or attribute alerts.
 
 ```
 [root@nodea ~]# pcs alert create id=filtered-smtp path=/var/lib/pacemaker/alert_smtp_filtered.sh options email_sender=noreply@example.com RHA_alert_kind="fencing"
-[root@nodea ~]# pcs alert recipient add smtp-alert value=student@workstation.lab.example.com 
-Error: alert 'smtp-alert' does not exist
 [root@nodea ~]# pcs alert recipient add filtered-smtp value=student@workstation.lab.example.com  
 [root@nodea ~]# 
 ```
 
-This example will send 
+This example will send alerts of kind node, resource, attribute, and "unhandled" alerts, but not fencing notifications:
 
 ```
  ~]# pcs alert create id=filtered-smtp path=/var/lib/pacemaker/alert_smtp_filtered.sh options email_sender=noreply@example.com RHA_alert_kind="node,resource,attribute"

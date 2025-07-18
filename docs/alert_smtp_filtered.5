@@ -63,7 +63,7 @@ These alerts are generated when a resource is started, stopped, or fails to star
 .EE
 
 .PP
-\fIresource\fP
+\fIattriubute\fP
 
 .EX
 These alerts are generated when a resource's attribute is changed. 
@@ -83,7 +83,7 @@ Error: alert 'smtp-alert' does not exist
 .EE
 
 .PP
-This example will send
+This example will send alerts of kind node, resource, attribute, and "unhandled" alerts, but not fencing notifications:
 
 .EX
  ~]# pcs alert create id=filtered-smtp path=/var/lib/pacemaker/alert_smtp_filtered.sh options email_sender=noreply@example.com RHA_alert_kind="node,resource,attribute"

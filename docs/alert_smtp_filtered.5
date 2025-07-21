@@ -6,13 +6,16 @@ alert_smtp_filtered.sh \- Sample SMTP alert agent for pacemaker with filtering
 
 
 .SH SYNOPSIS
-pcs alert create id=filtered-smtp path=/var/lib/pacemaker/\fBalert_smtp_filtered.sh\fP options \fBemail_sender=\fPnoreply@example.com \fBRHA_alert_kind=\fP"fencing"
+pcs alert create id=filtered-smtp \\
+ path=/var/lib/pacemaker/\fBalert_smtp_filtered.sh\fP options \\
+ \fBemail_sender=\fPnoreply@example.com \fBRHA_alert_kind=\fP"fencing"
 
 
 .SH DESCRIPTION
-\fBalert_smtp_filtered.sh\fP is a sample alert agent which implements filtering by matching the
-value of pacemaker's CRM_alert_kind variable that is set when an alert is generated. This
-agent was built for a client who wished to send receive alerts whenever resources are relocated,.
+\fBalert_smtp_filtered.sh\fP is a sample alert agent which implements filtering by
+ matching the value of pacemaker's CRM_alert_kind variable that is set when an
+ alert is generated. This agent was built for a client who wished to send
+ receive alerts whenever resources are relocated,.
 
 .PP
 By default, the email client the script expects is sendmail.
@@ -22,7 +25,11 @@ By default, the email client the script expects is sendmail.
 \fBpath=\fP_/var/lib/pacemaker/alert_smtp\fIfiltered.sh\fP
 
 .PP
-This is the path to the alert agent on the nodes' filesystems.
+This is the path to the alert agent on the nodes' filesystems - the path should
+ match to wherever you've installed the file. By default they're placed in
+ /usr/share/pacemaker/alerts/ when installing from rpm, and they're usually
+ manually placed in /var/lib/pacemaker/ for runtime when the agents are
+ configured.
 
 .PP
 \fBemail_sender=\fP\fIuser@example.com\fP
@@ -34,61 +41,84 @@ This is what the agent will use as the "FROM" field on email alerts
 \fBRHA_alert_kind=\fP\fI"fencing,node,resource,attribute"\fP
 
 .PP
-This option sets the RHA_alert_kind variable in the alert_smtp_filtered alert agent, to specify the
-criteria on which alerts to allow to send to the email recipient.
+This option sets the RHA_alert_kind variable in the alert_smtp_filtered alert
+ agent, to specify the criteria on which alerts to allow to send to the email
+ recipient.
 
 .PP
-Note that otherwise-unspecified alert types will be sent to the recipient regardless of the filter
-specification.
+Note that otherwise-unspecified alert types will be sent to the recipient
+ regardless of the filter specification.
 
 .PP
 \fIfencing\fP
 
-.EX
-These alerts are generated when a node is fenced, whether automatically or automatically.
-.EE
+.PP
+These alerts are generated when a node is fenced, whether automatically or
+ automatically.
 
 .PP
 \fInode\fP
 
-.EX
-These alerts when a node is suspended, unsuspended, rebooted, joins the cluster, etc. 
-.EE
+.PP
+These alerts when a node is suspended, unsuspended, rebooted, joins the
+ cluster, etc.
 
 .PP
 \fIresource\fP
 
+.PP
+These alerts are generated when a resource is started, stopped, or fails to
+ start.
+
+.PP
+\fIattribute\fP
+
+.PP
+These alerts are generated when a resource's attribute is changed.
+
+
+.SH INSTALLATION
+Place alert_syslog.sh in pacemaker lib dirctory (typically /var/lib/pacemaker)
+ chown it the pacemaker user and group (typically hacluster:haclient on a
+ default install); chmod it 0750
+
 .EX
-These alerts are generated when a resource is started, stopped, or fails to start. 
+[root@nodea ~]# cp /usr/share/pacemaker/alerts/alert_smtp_filtered.sh.sample \\
+  /var/lib/pacemaker/alert_smtp_filtered.sh
+[root@nodea ~]# chown hacluster:haclient /var/lib/pacemaker/alert_smtp_filtered.sh
+[root@nodea ~]# chmod 0750 /var/lib/pacemaker/alert_smtp_filtered.sh
 .EE
 
 .PP
-\fIattriubute\fP
-
-.EX
-These alerts are generated when a resource's attribute is changed. 
-.EE
+Proceed to EXAMPLES section for alert configuration
 
 
 .SH EXAMPLES
-The following example will send alert emails whenever a node is fenced and also unhandled alerts,
-but not node, resource, or attribute alerts.
+The following example will send alert emails whenever a node is fenced and also
+ unhandled alerts, but not node, resource, or attribute alerts, and send the
+ alert emails to sysad@example.com
 
 .EX
-[root@nodea ~]# pcs alert create id=filtered-smtp path=/var/lib/pacemaker/alert_smtp_filtered.sh options email_sender=noreply@example.com RHA_alert_kind="fencing"
-[root@nodea ~]# pcs alert recipient add smtp-alert value=student@workstation.lab.example.com 
-Error: alert 'smtp-alert' does not exist
-[root@nodea ~]# pcs alert recipient add filtered-smtp value=student@workstation.lab.example.com  
+[root@nodea ~]# pcs alert create id=filtered-smtp \\
+ path=/var/lib/pacemaker/alert_smtp_filtered.sh options \\
+ email_sender=noreply@example.com RHA_alert_kind="fencing"
+[root@nodea ~]# pcs alert recipient add filtered-smtp \\
+ value=sysad@example.com@example.com  
 [root@nodea ~]# 
 .EE
 
 .PP
-This example will send alerts of kind node, resource, attribute, and "unhandled" alerts, but not fencing notifications:
+This example will send alerts of kind node, resource, attribute, and "unhandled"
+ alerts, but not fencing notifications, and the alert emails will go to
+ monitor@example.com:
 
 .EX
- ~]# pcs alert create id=filtered-smtp path=/var/lib/pacemaker/alert_smtp_filtered.sh options email_sender=noreply@example.com RHA_alert_kind="node,resource,attribute"
- ~]# pcs alert recipient add filtered-smtp value=student@workstation.lab.example.com  
- ~]# 
+[root@nodea ~]# pcs alert create id=filtered-smtp \\
+path=/var/lib/pacemaker/alert_smtp_filtered.sh options \\
+email_sender=noreply@example.com RHA_alert_kind="node,resource,attribute"
+[root@nodea ~]# pcs alert recipient add filtered-smtp \\
+value=monitor@example.com  
+[root@nodea ~]# 
 .EE
 
 
